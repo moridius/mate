@@ -33,7 +33,7 @@ def PrintDeposit( deposit ):
     print( ("Kontostand: {:+.2f}€ ".format( deposit )).replace('.', ',') )
 
 def PrintHelp():
-    print( "mate - ein Skript um meinen Kontostand in der Getränkekasse unseres Club-Hauses zu speichern.\n" )
+    print( "mate - ein Skript um meinen Kontostand in der Getränkekasse unseres Club-Raums zu speichern.\n" )
     print( "Beispiele:" )
     print( "  $ mate" )
     print( "  > Kontostand: 2,30€\n" )
@@ -44,7 +44,12 @@ def PrintHelp():
     print( "  $ mate -" )
     print( "  > 1,20€ abgezogen." )
 
+
 if __name__ == "__main__":
+    if len( sys.argv ) > 1 and "help" in sys.argv[1]:
+        PrintHelp()
+        sys.exit(0)
+    
     if not mate_file or not mate_price:
         print( "Im Skript stehen oben ein paar Settings, die du anpassen solltest. Ja, ich weiß, dass das ekelig ist. ;-)", file=sys.stderr )
         sys.exit(1)
@@ -52,10 +57,7 @@ if __name__ == "__main__":
     deposit = ReadFile()
 
     if len( sys.argv ) > 1:
-        if "help" in sys.argv[1]:
-            PrintHelp()
-            sys.exit(0)
-        elif sys.argv[1].startswith('+') or sys.argv[1].startswith('-'):
+        if sys.argv[1].startswith('+') or sys.argv[1].startswith('-'):
             val = 0
             if sys.argv[1] == '-':
                 val = (-1) * mate_price
@@ -63,7 +65,7 @@ if __name__ == "__main__":
                 try:
                     val = float( sys.argv[1].replace(',', '.') )
                 except ValueError:
-                    print( "Parameter-Fehler.", file=sys.stderr )
+                    print( "Parameter-Fehler. Versuch mal \"mate --help\". ;-)", file=sys.stderr )
                     sys.exit(2)
 
             deposit = ModDeposit( deposit, val )
